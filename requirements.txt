@@ -1,1 +1,1 @@
-Commande ECHO activ‚e.
+djangorestframework==3.12.4
