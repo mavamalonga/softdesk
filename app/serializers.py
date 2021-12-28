@@ -21,8 +21,23 @@ class ProjectDetailSerializer(ModelSerializer):
 		serializer = IssueSerializer(queryset, many=True)
 		return serializer.data
 
+
 class IssueSerializer(ModelSerializer):
+
+	comments = SerializerMethodField()
 
 	class Meta:
 		model = models.Issue
-		fields = ['title', 'description', 'tag', 'priority', 'status', 'assignee_user_id', 'created_time']
+		fields = ['title', 'description', 'tag', 'priority', 'status', 'assignee_user_id', 'created_time', 'comments']
+
+	def get_comments(self, instance):
+		queryset = models.Comment.objects.filter(issue_id=instance.id)
+		serializer = CommentSerializer(queryset, many=True)
+		return serializer.data
+
+
+class CommentSerializer(ModelSerializer):
+
+	class Meta:
+		model = models.Comment
+		fields = ['description', 'author_id', 'created_time']
