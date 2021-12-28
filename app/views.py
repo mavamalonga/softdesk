@@ -1,48 +1,49 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from django.http import Http404
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from app import models, serializers
 
-@api_view(['GET', 'POST'])
-def project_list(request):
+class Project_list(APIView):
 
-	if request.method == 'GET':
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, format=None):
 		projects = models.Project.objects.all()
 		serializer = serializers.ProjectSerializer(projects, many=True)
 		return Response(serializer.data)
 
-	elif request.method == 'POST':
+	def post(self, request, format=None):
 		serializer = serializers.ProjectSerializer(data=request.data)
 		if serializer.is_valid():
-			serializer.author_user_id = request.user.id
-			serializer.save()
+			serializer.save(author_user_id=request.user)
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def project_detail(request, pk):
-	"""
-	Retrive, update or delete a code project
-	"""
-	try:
-		project = models.Project.objects.get(pk=pk)
-	except:
-		return Response(status=status.HTTP_404_NOT_FOUND)
+class Project_detail(APIView):
 
-	if request.method == 'GET':
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, pk):
+		try:
+			project = models.Project.objects.get(pk=pk)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
 		serializer = serializers.ProjectSerializer(project)
 		return Response(serializer.data)
 
-	elif request.method == 'PUT':
+	def put(self, request, format=None):
 		serializer = serializers.ProjectSerializer(project, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	elif request.method == 'DELETE':
+	def delete(self, request, format=None):
 		project.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
 

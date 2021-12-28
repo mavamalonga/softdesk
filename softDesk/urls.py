@@ -10,6 +10,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/project/', views.project_list),
-    path('api/project/<int:pk>/', views.project_detail),
+    path('api/project/', views.Project_list.as_view()),
+    path('api/project/<int:pk>/', views.Project_detail.as_view()),
 ]
