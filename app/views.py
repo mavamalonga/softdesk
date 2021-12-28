@@ -33,7 +33,7 @@ class Project_detail(APIView):
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
-		serializer = serializers.ProjectSerializer(project)
+		serializer = serializers.ProjectDetailSerializer(project)
 		return Response(serializer.data)
 
 	def put(self, request, format=None):
@@ -47,5 +47,14 @@ class Project_detail(APIView):
 		project.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class Issue_list(APIView):
+
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request):
+		issues = models.Issue.objects.all()
+		serializer = serializers.IssueSerializer(issues, many=True)
+		return Response(serializer.data)
 
 
