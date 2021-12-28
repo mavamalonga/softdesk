@@ -6,6 +6,28 @@ from rest_framework.permissions import IsAuthenticated
 
 from app import models, serializers
 
+class SignUp(APIView):
+
+	def get(self, request):
+		content = {
+			"username":"xxxxxxx",
+			"password":"xxxxxxx",
+			"password2":"xxxxxxx",
+			"email":"xxxxxxx",
+			"first_name":"xxxxxxx",
+			"last_name":"xxxxxxx",
+		}
+		return Response(content)
+
+	def post(self, request):
+		serializer = serializers.SignUpSerializer(data=request.data)
+		print(serializer)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class Project_list(APIView):
 
 	permission_classes = [IsAuthenticated]
