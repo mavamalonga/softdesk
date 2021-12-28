@@ -3,6 +3,13 @@ from app import models
 
 class ProjectSerializer(ModelSerializer):
 
+	class Meta:
+		model = models.Project
+		fields = ['id', 'title', 'description', 'projet_type']
+
+
+class ProjectDetailSerializer(ModelSerializer):
+
 	issues = SerializerMethodField()
 
 	class Meta:
@@ -13,12 +20,6 @@ class ProjectSerializer(ModelSerializer):
 		queryset = models.Issue.objects.filter(project_id=instance.id)
 		serializer = IssueSerializer(queryset, many=True)
 		return serializer.data
-
-class ProjectDetailSerializer(ModelSerializer):
-
-	class Meta:
-		model = models.Project
-		fields = ['id', 'title', 'description', 'projet_type']
 
 class IssueSerializer(ModelSerializer):
 
