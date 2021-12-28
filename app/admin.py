@@ -1,25 +1,23 @@
 from django.contrib import admin
 from app import models
 
-class ProjectsAdmin(admin.ModelAdmin):
+class ProjectAdmin(admin.ModelAdmin):
 	list_display = ('title', 'description')
 
-"""
-class UserAdmin(admin.ModelAdmin):
-	list_display = ('fist_name', )
-
-class ContributorsAdmin(admin.ModelAdmin):
-	list_display = ('user_id', )
-
-class IssuesAdmin(admin.ModelAdmin):
+class IssueAdmin(admin.ModelAdmin):
 	list_display = ('title', )
 
-class CommentsAdmin(admin.ModelAdmin):
+class CommentAdmin(admin.ModelAdmin):
 	list_display = ('author_id', )
+
+class ContributorAdmin(admin.ModelAdmin):
+	list_display = ('user_id', )
+
+class UserAdmin(admin.ModelAdmin):
+	list_display = ('username', )
 		
+admin.site.register(models.Project, ProjectAdmin)
+admin.site.register(models.Issue, IssueAdmin)
+admin.site.register(models.Comment, CommentAdmin)
+admin.site.register(models.Contributor, ContributorAdmin)
 admin.site.register(models.User, UserAdmin)
-admin.site.register(models.Contributors, ContributorsAdmin)
-admin.site.register(models.Issues, IssuesAdmin)
-admin.site.register(models.Comments, CommentsAdmin)
-"""
-admin.site.register(models.Projects, ProjectsAdmin)
