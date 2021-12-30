@@ -32,9 +32,7 @@ class ContributorProject(APIView):
 
 	def get(self, request, project_id):
 		try:
-			print("11111111111111111")
 			project = models.Project.objects.filter(id=project_id)
-			print("2222222222222222222222")
 			if project.count() != 0:
 				contributors = models.Contributor.objects.filter(project_id=project_id)
 				if contributors.count() != 0:
@@ -71,7 +69,7 @@ class ContributorProject(APIView):
 
 	def delete(self, request, project_id):
 		try:
-			project = models.Project.objects.filter(id=project_id).count()
+			project = models.Project.objects.filter(id=project_id)
 			if project.count() != 0:
 				if request.user.username == 'admin':
 					contributor_deleted = models.Contributor.objects.filter(project_id=project_id).filter(
