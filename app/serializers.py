@@ -123,9 +123,9 @@ class CommentSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Comment
-		fields = ['description', 'author_id', 'created_time']
+		fields = ['id', 'description', 'author_id', 'created_time']
 
-class CommentDetailSerializer(ModelSerializer):
+class CommentPostSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Comment

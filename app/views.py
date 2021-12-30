@@ -214,11 +214,34 @@ class Comment(APIView):
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
-		serializer = serializers.CommentDetailSerializer(data=request.data)
+		serializer = serializers.CommentPostSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save(issue_id=issue, author_id=request.user)
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CommentDetail(APIView):
+
+	def get(self, request, project_id, issue_id, comment_id):
+		comment = models.Comment.objects.get(pk=comment_id)
+		serializer = serializers.CommentSerializer(comment)
+		return Response(serializer.data)
+
+	def put(self, request, project_id, issue_id, comment_id):
+		issue = models.Issue.objects.get(pk=issue_id)
+		comment = models.Comment.objects.get(pk=comment_id)
+		serializer = serializers.CommentPostSerializer(comment, data=request.data)
+		if serializer.is_valid():
+			serializer.save(issue_id=issue, author_id=request.user)
+			return Response(serializer.data)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, project_id, issue_id, comment_id):
+		comment = models.Comment.objects.get(pk=comment_id)
+		comment.delete()
+		content = {"detail":f"comment_id {comment_id} deleted"}
+		return Response(content)
+
 
 
 
