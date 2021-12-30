@@ -4,6 +4,12 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
+class UserSerializer(ModelSerializer):
+
+	class Meta:
+		models.User
+		fields = ['username', 'email', 'first_name', 'last_name']
+
 
 class SignUpSerializer(ModelSerializer):
     email = serializers.EmailField(
@@ -40,6 +46,35 @@ class SignUpSerializer(ModelSerializer):
         user.save()
 
         return user
+
+
+class ContributorSerializer(ModelSerializer):
+
+	class Meta:
+		model = models.Contributor
+		fields = ['user_id', 'project_id', 'permission', 'role']
+
+
+class AddContributorSerializer(ModelSerializer):
+
+	#project_id = SerializerMethodField()
+
+	class Meta:
+		model = models.Contributor
+		fields = ('user_id', 'project_id', 'permission', 'role')
+		extra_kwargs = {
+			'user_id': {'required': True},
+			'project_id':{'required': True},
+			'permission':{'required':True},
+			'role':{'required':True}
+		}
+	"""
+	def get_project_id(self, instance):
+		queryset = models.Project.filter(id=instance.id)
+		serializer = ProjectSerializer(queryset, many=True)
+		print(f"instance : {instance}")
+		return serializer.data
+	"""
 
 
 class ProjectSerializer(ModelSerializer):

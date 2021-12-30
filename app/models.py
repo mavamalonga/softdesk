@@ -3,8 +3,8 @@ from django.db import models
 from django.conf import settings
 
 """ accounts : 
-		admin-co, password-oc
-		user-oc, password-oc
+		admin-oc, password-oc
+		admin, Se3cret!
 """
 
 class User(AbstractUser):
@@ -15,14 +15,9 @@ class User(AbstractUser):
 
 class Contributor(models.Model):
 
-	class Permission(models.TextChoices):
-		read = 'Read'
-		update = 'Update'
-		delete = 'Delete'
-
 	user_id = models.IntegerField()
-	projet_id = models.IntegerField()
-	permission = models.CharField(max_length=25, choices=Permission.choices)
+	project_id = models.IntegerField()
+	permission = models.CharField(max_length=255)
 	role = models.CharField(max_length=255)
 
 class Project(models.Model):

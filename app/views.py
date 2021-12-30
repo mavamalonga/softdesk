@@ -21,11 +21,59 @@ class SignUp(APIView):
 
 	def post(self, request):
 		serializer = serializers.SignUpSerializer(data=request.data)
-		print(serializer)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ContributorProject(APIView):
+
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request, project_id):
+		try:
+			project = models.Project.objects.filter(id=project_id)
+			auth_user = models.Contributor.objects.filter(project_id=project_id).filter(
+				user_id=request.user.id).count()
+			if auth_user != 0 or request.user.username == 'admin':
+				contributors = models.Contributor.objects.filter(project_id=project_id)
+			else:
+				content = {"detail":"you are not a contributor"}
+				return Response(content)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+		serializer = serializers.ContributorSerializer(contributors, many=True)
+		return Response(serializer.data)
+
+	def post(self, request, project_id):
+		try:
+			project = models.Project.objects.filter(id=project_id)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+		serializer = serializers.AddContributorSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, project_id):
+		try:
+			project = models.Project.objects.filter(id=project_id).count()
+			if project != 0 and request.user.username == 'admin':
+				contributor_deleted = models.Contributor.objects.filter(project_id=project_id).filter(
+				user_id=request.data['user_id'])
+				if contributor_deleted.count() != 0:
+					contributor_deleted.delete()
+					content = {"detail": f"contributor user_id {request.data['user_id']} deleted"}
+					return Response(content)
+				else:
+					content = {"detail":"No found contributor with this id"}
+					return Response(content, status=status.HTTP_404_NOT_FOUND)
+			else:
+				content = {"detail":"only admin acount can delete contributors"}
+				return Response(content)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class Project_list(APIView):
@@ -58,16 +106,27 @@ class Project_detail(APIView):
 		serializer = serializers.ProjectDetailSerializer(project)
 		return Response(serializer.data)
 
-	def put(self, request, format=None):
+	def put(self, request, pk):
+		try:
+			project = models.Project.objects.get(pk=pk)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
 		serializer = serializers.ProjectSerializer(project, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def delete(self, request, format=None):
+	def delete(self, request, pk):
+		try:
+			project = models.Project.objects.get(pk=pk)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+		content = {"detail":f"Projet {pk} deleted"}
+
 		project.delete()
-		return Response(status=status.HTTP_204_NO_CONTENT)
+		return Response(content, status=status.HTTP_204_NO_CONTENT)
 
 
 class Issue_list(APIView):
