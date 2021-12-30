@@ -3,6 +3,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from app.permissions import IsAuthorOrReadOnly
 
 from app import models, serializers
 
@@ -93,7 +94,7 @@ class ContributorProject(APIView):
 
 class Project_list(APIView):
 
-	permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
 
 	def get(self, request, format=None):
 		projects = models.Project.objects.all()
@@ -110,7 +111,7 @@ class Project_list(APIView):
 
 class Project_detail(APIView):
 
-	permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
 
 	def get(self, request, pk):
 		try:
@@ -144,13 +145,52 @@ class Project_detail(APIView):
 		return Response(content, status=status.HTTP_204_NO_CONTENT)
 
 
-class Issue_list(APIView):
+class IssueList(APIView):
 
 	permission_classes = [IsAuthenticated]
 
-	def get(self, request):
+	def get(self, request, project_id):
+		try:
+			project = models.Project.objects.get(id=project_id)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
 		issues = models.Issue.objects.all()
 		serializer = serializers.IssueSerializer(issues, many=True)
 		return Response(serializer.data)
+
+	def post(self, request, project_id):
+		try:
+			project = models.Project.objects.get(id=project_id)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		serializer = serializers.IssuePostSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save(project_id=project_id, assignee_user_id=request.user)
+			return Response(serializer.data, status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def put(self, request, project_id, issue_id):
+		try:
+			issue = models.Issue.objects.filter(project_id=project_id).get(pk=issue_id)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		serializer = serializers.IssuePostSerializer(issue, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, project_id, issue_id):
+		try:
+			issue = models.Issue.objects.filter(project_id=project_id).get(pk=issue_id)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		issue.delete()
+		content = {"detail":f"issue {issue_id} deleted"}
+		return Response(content, status=status.HTTP_204_NO_CONTENT)
+
 
 
