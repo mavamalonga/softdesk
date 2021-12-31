@@ -48,6 +48,33 @@ class SignUpSerializer(ModelSerializer):
         return user
 
 
+class ProjectViewGetSerializer(ModelSerializer):
+
+	class Meta:
+		model = models.Project
+		fields = ['id', 'title', 'description', 'projet_type']
+
+class ProjectViewPostSerializer(ModelSerializer):
+
+	class Meta:
+		model = models.Project
+		fields = ['title', 'description', 'projet_type']
+
+
+class ProjectDetailSerializer(ModelSerializer):
+
+	issues = SerializerMethodField()
+
+	class Meta:
+		model = models.Project
+		fields = ['id', 'title', 'description', 'projet_type', 'issues']
+
+	def get_issues(self, instance):
+		queryset = models.Issue.objects.filter(project_id=instance.id)
+		serializer = IssueSerializer(queryset, many=True)
+		return serializer.data
+
+
 class ContributorSerializer(ModelSerializer):
 
 	class Meta:
@@ -72,26 +99,6 @@ class ContributorGetSerializer(ModelSerializer):
 		model = models.Contributor
 		fields = ['username', 'project_id', 'permission', 'role']
 
-
-class ProjectSerializer(ModelSerializer):
-
-	class Meta:
-		model = models.Project
-		fields = ['id', 'title', 'description', 'projet_type']
-
-
-class ProjectDetailSerializer(ModelSerializer):
-
-	issues = SerializerMethodField()
-
-	class Meta:
-		model = models.Project
-		fields = ['id', 'title', 'description', 'projet_type', 'issues']
-
-	def get_issues(self, instance):
-		queryset = models.Issue.objects.filter(project_id=instance.id)
-		serializer = IssueSerializer(queryset, many=True)
-		return serializer.data
 
 
 class IssueSerializer(ModelSerializer):

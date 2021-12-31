@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from app import models, serializers
 
-class SignUp(APIView):
+class SignUpView(APIView):
 
 	def post(self, request):
 		serializer = serializers.SignUpSerializer(data=request.data)
@@ -17,24 +17,28 @@ class SignUp(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProjectList(APIView):
+class ProjectView(APIView):
 
 	permission_classes = [IsAuthenticated]
 
-	def get(self, request, format=None):
+	def get(self, request):
 		projects = models.Project.objects.all()
-		serializer = serializers.ProjectSerializer(projects, many=True)
+		serializer = serializers.ProjectViewGetSerializer(projects, many=True)
 		return Response(serializer.data)
 
-	def post(self, request, format=None):
-		serializer = serializers.ProjectSerializer(data=request.data)
+	def post(self, request):
+		serializer = serializers.ProjectViewPostSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save(author=request.user)
+			"""
+				build function that send request to contrubutor class for create a new contributor with 
+				create of project 
+			"""
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProjectDetail(APIView):
+class ProjectViewDetail(APIView):
 
 	permission_classes = [IsAuthenticated]
 
@@ -43,7 +47,6 @@ class ProjectDetail(APIView):
 			project = models.Project.objects.get(pk=pk)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
-
 		serializer = serializers.ProjectDetailSerializer(project)
 		return Response(serializer.data)
 
@@ -53,7 +56,10 @@ class ProjectDetail(APIView):
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
-		serializer = serializers.ProjectSerializer(project, data=request.data)
+		if project.author != request.user:
+			return Response({"response":"You don't have permission to post that."})
+
+		serializer = serializers.ProjectViewPostSerializer(project, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
@@ -64,10 +70,13 @@ class ProjectDetail(APIView):
 			project = models.Project.objects.get(pk=pk)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
-		content = {"detail":f"Projet {pk} deleted"}
 
+		if project.author != request.user:
+			return Response({"response":"You don't have permission to post that."})
+
+		content = {"respose": "project {project.title} deleted"}
 		project.delete()
-		return Response(content, status=status.HTTP_204_NO_CONTENT)
+		return Response(content)
 
 
 class ContributorProject(APIView):
