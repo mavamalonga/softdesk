@@ -55,26 +55,22 @@ class ContributorSerializer(ModelSerializer):
 		fields = ['user_id', 'project_id', 'permission', 'role']
 
 
-class AddContributorSerializer(ModelSerializer):
-
-	#project_id = SerializerMethodField()
+class ContributorAddSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Contributor
-		fields = ('user_id', 'project_id', 'permission', 'role')
+		fields = ('username', 'permission', 'role')
 		extra_kwargs = {
-			'user_id': {'required': True},
-			'project_id':{'required': True},
+			'username': {'required': True},
 			'permission':{'required':True},
 			'role':{'required':True}
 		}
-	"""
-	def get_project_id(self, instance):
-		queryset = models.Project.filter(id=instance.id)
-		serializer = ProjectSerializer(queryset, many=True)
-		print(f"instance : {instance}")
-		return serializer.data
-	"""
+
+class ContributorGetSerializer(ModelSerializer):
+
+	class Meta:
+		model = models.Contributor
+		fields = ['username', 'project_id', 'permission', 'role']
 
 
 class ProjectSerializer(ModelSerializer):

@@ -15,23 +15,17 @@ class User(AbstractUser):
 
 class Contributor(models.Model):
 
-	user_id = models.IntegerField()
+	username = models.IntegerField()
 	project_id = models.IntegerField()
 	permission = models.CharField(max_length=255)
 	role = models.CharField(max_length=255)
 
 class Project(models.Model):
 
-	class ProjectType(models.TextChoices):
-		backend = 'Back-end'
-		frontend = 'Front-end'
-		ios = 'iOS'
-		android = 'Android'
-
 	title = models.CharField(max_length=255)
 	description = models.TextField(max_length=8192, blank=True)
-	projet_type = models.CharField(max_length=128, choices=ProjectType.choices)
-	author_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+	projet_type = models.CharField(max_length=128)
+	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	
 	def __str__(self):
 		return self.title
