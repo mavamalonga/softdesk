@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/project/', views.ProjectView.as_view()),
-    path('api/project/<int:pk>/', views.ProjectViewDetail.as_view()),
+    path('api/project/<int:project_id>/', views.ProjectViewDetail.as_view()),
     path('api/project/<int:project_id>/users/', views.ContributorView.as_view()),
     path('api/project/<int:project_id>/issues/', views.IssueView.as_view()),
     path('api/project/<int:project_id>/issues/<int:issue_id>/', views.IssueDetail.as_view()),

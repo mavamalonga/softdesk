@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from app import models, serializers
 
+
 class SignUpView(APIView):
 
 	def post(self, request):
@@ -23,6 +24,8 @@ class ProjectView(APIView):
 
 	def get(self, request):
 		projects = models.Project.objects.all()
+		if projects.count() == 0:
+			return Response({"response":"the project list is empty "})
 		serializer = serializers.ProjectViewGetSerializer(projects, many=True)
 		return Response(serializer.data)
 
@@ -42,10 +45,22 @@ class ProjectViewDetail(APIView):
 
 	permission_classes = [IsAuthenticated]
 
-	def get(self, request, pk):
+	def get(self, request, project_id):
+		""" only contributor of project can post issues"""
 		try:
-			project = models.Project.objects.get(pk=pk)
+			contributor = models.Contributor.objects.filter(project_id=project_id)
+			user = contributor.get(username=request.user.username)
+			if user.username == request.user.username:
+				pass
+			else:
+				return Response({"response":"You don't have permission to do this"})
 		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
+
+		try:
+			project = models.Project.objects.get(pk=project_id)
+		except Project.DoesNotExist:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 		serializer = serializers.ProjectDetailSerializer(project)
 		return Response(serializer.data)
@@ -84,6 +99,16 @@ class ContributorView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, project_id):
+		""" only contributor of project can post issues"""
+		try:
+			contributors = models.Contributor.objects.filter(project_id=project_id)
+			username = contributors.get(username=request.user.username)
+			if username is None:
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
+
 		try:
 			contributor = models.Contributor.objects.filter(project_id=project_id)
 		except Contributor.DoesNotExist:
@@ -131,6 +156,18 @@ class IssueView(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, project_id):
+		""" only contributor of project can post issues"""
+		try:
+			contributor = models.Contributor.objects.filter(project_id=project_id)
+			user = contributor.get(username=request.user.username)
+			if user.username == request.user.username:
+				pass
+			else:
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
+
 		try:
 			project = models.Project.objects.get(id=project_id)
 		except:
@@ -140,14 +177,17 @@ class IssueView(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, project_id):
-
 		""" only contributor of project can post issues"""
 		try:
-			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
-			if contributor.count() == 0:
-				return return Response({"response":"You don't have permission to post isssue"})
-		except Contributor.DoesNotExist:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			contributor = models.Contributor.objects.filter(project_id=project_id)
+			user = contributor.get(username=request.user.username)
+			if user.username == request.user.username:
+				pass
+			else:
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
 
 		serializer = serializers.IssuePostSerializer(data=request.data)
 		if serializer.is_valid():
@@ -161,11 +201,20 @@ class IssueDetail(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def put(self, request, project_id, issue_id):
+		""" only contributor of project can post issues"""
+		try:
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.id)
+			if contributor.count() == 0:
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
+
 		""" only owner of issue can update issue"""
 		try:
 			issue = models.Issue.objects.filter(project_id=project_id).get(pk=issue_id)
 			if issue.assignee_user != request.user:
-				return return Response({"response":"You don't have permission to update this issue"})
+				return Response({"response":"You don't have permission to update this issue"})
 		except Issue.DoesNotExist:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -176,11 +225,20 @@ class IssueDetail(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def delete(self, request, project_id, issue_id):
+		""" only contributor of project can post issues"""
+		try:
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.id)
+			if contributor.count() == 0:
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
+
 		""" only owner of issue can delete issue"""
 		try:
 			issue = models.Issue.objects.filter(project_id=project_id).get(pk=issue_id)
 			if issue.assignee_user != request.user:
-				return return Response({"response":"You don't have permission to delete this issue"})
+				return Response({"response":"You don't have permission to delete this issue"})
 		except Issue.DoesNotExist:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -194,13 +252,17 @@ class Comment(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, project_id, issue_id):
-		""" only contributor of project can get comments"""
+		""" only contributor of project can post issues"""
 		try:
-			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
-			if contributor.count() == 0:
-				return return Response({"response":"You don't have permission to do that"})
-		except Contributor.DoesNotExist:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			contributor = models.Contributor.objects.filter(project_id=project_id)
+			user = contributor.get(username=request.user.username)
+			if user.username == request.user.username:
+				pass
+			else:
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
 
 		try:
 			comments = models.Comment.objects.filter(issue=issue_id)
@@ -210,15 +272,19 @@ class Comment(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, project_id, issue_id):
-		""" only contributor of project can post comments"""
+		""" only contributor of project can post issues"""
 		try:
-			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
-			if contributor.count() == 0:
-				return return Response({"response":"You don't have permission to do that"})
-		except Contributor.DoesNotExist:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			contributor = models.Contributor.objects.filter(project_id=project_id)
+			user = contributor.get(username=request.user.username)
+			if user.username == request.user.username:
+				pass
+			else:
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
 
-		try;
+		try:
 			issue = models.Issue.objects.get(pk=issue_id)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
@@ -234,13 +300,14 @@ class CommentDetail(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, project_id, issue_id, comment_id):
-		""" only contributor of project can get comments"""
+		""" only contributor of project can post issues"""
 		try:
-			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.id)
 			if contributor.count() == 0:
-				return return Response({"response":"You don't have permission to do that"})
-		except Contributor.DoesNotExist:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
 
 		try:
 			comment = models.Comment.objects.get(pk=comment_id)
@@ -251,13 +318,14 @@ class CommentDetail(APIView):
 		return Response(serializer.data)
 
 	def put(self, request, project_id, issue_id, comment_id):
-		""" only contributor of project can get comments"""
+		""" only contributor of project can post issues"""
 		try:
-			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.id)
 			if contributor.count() == 0:
-				return return Response({"response":"You don't have permission to do that"})
-		except Contributor.DoesNotExist:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
 
 		try:
 			issue = models.Issue.objects.get(pk=issue_id)
@@ -272,13 +340,14 @@ class CommentDetail(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def delete(self, request, project_id, issue_id, comment_id):
-		""" only contributor of project can get comments"""
+		""" only contributor of project can post issues"""
 		try:
-			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.id)
 			if contributor.count() == 0:
-				return return Response({"response":"You don't have permission to do that"})
-		except Contributor.DoesNotExist:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+				return Response({"response":"You don't have permission to do this"})
+		except:
+			content = {"response":"Not found response"}
+			return Response(content, status=status.HTTP_404_NOT_FOUND)
 
 		try:
 			comment = models.Comment.objects.get(pk=comment_id)
@@ -286,13 +355,4 @@ class CommentDetail(APIView):
 			comment.delete()
 		content = {"response":"comment deleted"}
 		return Response(content)
-
-
-
-
-
-
-
-
-
 

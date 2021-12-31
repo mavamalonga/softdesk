@@ -7,10 +7,3 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         return obj.author_user_id == request.user
-
-class IsContributorOrNot(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.author_user_id == request.user

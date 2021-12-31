@@ -8,10 +8,10 @@ class IssueAdmin(admin.ModelAdmin):
 	list_display = ('title', )
 
 class CommentAdmin(admin.ModelAdmin):
-	list_display = ('author_id', )
+	list_display = ('author', )
 
 class ContributorAdmin(admin.ModelAdmin):
-	list_display = ('user_id', )
+	list_display = ('username', )
 
 class UserAdmin(admin.ModelAdmin):
 	list_display = ('username', )
