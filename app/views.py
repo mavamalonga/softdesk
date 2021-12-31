@@ -194,22 +194,38 @@ class Comment(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, project_id, issue_id):
+		""" only contributor of project can get comments"""
 		try:
-			comments = models.Comment.objects.filter(issue_id=issue_id)
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			if contributor.count() == 0:
+				return return Response({"response":"You don't have permission to do that"})
+		except Contributor.DoesNotExist:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		try:
+			comments = models.Comment.objects.filter(issue=issue_id)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 		serializer = serializers.CommentSerializer(comments, many=True)
 		return Response(serializer.data)
 
 	def post(self, request, project_id, issue_id):
+		""" only contributor of project can post comments"""
 		try:
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			if contributor.count() == 0:
+				return return Response({"response":"You don't have permission to do that"})
+		except Contributor.DoesNotExist:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		try;
 			issue = models.Issue.objects.get(pk=issue_id)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
 		serializer = serializers.CommentPostSerializer(data=request.data)
 		if serializer.is_valid():
-			serializer.save(issue_id=issue, author_id=request.user)
+			serializer.save(issue=issue, author=request.user)
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -218,23 +234,57 @@ class CommentDetail(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def get(self, request, project_id, issue_id, comment_id):
-		comment = models.Comment.objects.get(pk=comment_id)
+		""" only contributor of project can get comments"""
+		try:
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			if contributor.count() == 0:
+				return return Response({"response":"You don't have permission to do that"})
+		except Contributor.DoesNotExist:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		try:
+			comment = models.Comment.objects.get(pk=comment_id)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
 		serializer = serializers.CommentSerializer(comment)
 		return Response(serializer.data)
 
 	def put(self, request, project_id, issue_id, comment_id):
-		issue = models.Issue.objects.get(pk=issue_id)
-		comment = models.Comment.objects.get(pk=comment_id)
+		""" only contributor of project can get comments"""
+		try:
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			if contributor.count() == 0:
+				return return Response({"response":"You don't have permission to do that"})
+		except Contributor.DoesNotExist:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		try:
+			issue = models.Issue.objects.get(pk=issue_id)
+			comment = models.Comment.objects.get(pk=comment_id)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
 		serializer = serializers.CommentPostSerializer(comment, data=request.data)
 		if serializer.is_valid():
-			serializer.save(issue_id=issue, author_id=request.user)
+			serializer.save(issue=issue, author=request.user)
 			return Response(serializer.data)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def delete(self, request, project_id, issue_id, comment_id):
-		comment = models.Comment.objects.get(pk=comment_id)
-		comment.delete()
-		content = {"detail":f"comment_id {comment_id} deleted"}
+		""" only contributor of project can get comments"""
+		try:
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			if contributor.count() == 0:
+				return return Response({"response":"You don't have permission to do that"})
+		except Contributor.DoesNotExist:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		try:
+			comment = models.Comment.objects.get(pk=comment_id)
+		except:
+			comment.delete()
+		content = {"response":"comment deleted"}
 		return Response(content)
 
 

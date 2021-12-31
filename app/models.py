@@ -46,6 +46,6 @@ class Issue(models.Model):
 
 class Comment(models.Model):
 	description = models.TextField(max_length=8192)
-	author_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name='author')
-	issue_id = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue')
+	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name='author')
+	issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue')
 	created_time = models.DateTimeField(auto_now_add=True)
