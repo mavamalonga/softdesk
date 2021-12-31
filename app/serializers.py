@@ -108,7 +108,7 @@ class IssueSerializer(ModelSerializer):
 	class Meta:
 		model = models.Issue
 		fields = ['id', 'title', 'project_id', 'description', 'tag', 'priority', 'status', 
-			'assignee_user_id', 'created_time', 'comments']
+			'assignee_user', 'created_time', 'comments']
 
 	def get_comments(self, instance):
 		queryset = models.Comment.objects.filter(issue_id=instance.id)

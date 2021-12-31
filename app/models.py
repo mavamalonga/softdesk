@@ -32,18 +32,13 @@ class Project(models.Model):
 
 class Issue(models.Model):
 
-	class Priority(models.TextChoices):
-		weak = 'Weak'
-		meduim = 'Meduim'
-		high = 'High'
-
 	title = models.CharField(max_length=128)
 	description = models.TextField(max_length=8192)
 	tag = models.CharField(max_length=128)
-	priority = models.CharField(max_length=128, choices=Priority.choices)
+	priority = models.CharField(max_length=128)
 	project_id = models.IntegerField()
 	status = models.CharField(max_length=128)
-	assignee_user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	assignee_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	created_time = models.DateTimeField(auto_now_add=True) 
 
 	def __str__(self):

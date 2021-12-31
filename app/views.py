@@ -57,7 +57,7 @@ class ProjectViewDetail(APIView):
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
 		if project.author != request.user:
-			return Response({"response":"You don't have permission to post that."})
+			return Response({"response":"You don't have permission to update project"})
 
 		serializer = serializers.ProjectViewPostSerializer(project, data=request.data)
 		if serializer.is_valid():
@@ -72,14 +72,14 @@ class ProjectViewDetail(APIView):
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
 		if project.author != request.user:
-			return Response({"response":"You don't have permission to post that."})
+			return Response({"response":"You don't have permission to delete project."})
 
 		content = {"respose": "project {project.title} deleted"}
 		project.delete()
 		return Response(content)
 
 
-class ContributorProject(APIView):
+class ContributorView(APIView):
 
 	permission_classes = [IsAuthenticated]
 
@@ -126,7 +126,7 @@ class ContributorProject(APIView):
 				return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class IssueList(APIView):
+class IssueView(APIView):
 
 	permission_classes = [IsAuthenticated]
 
@@ -140,14 +140,18 @@ class IssueList(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, project_id):
+
+		""" only contributor of project can post issues"""
 		try:
-			project = models.Project.objects.get(id=project_id)
-		except:
+			contributor = models.Contributor.objects.filter(project_id=project_id).filter(username=request.user.username)
+			if contributor.count() == 0:
+				return return Response({"response":"You don't have permission to post isssue"})
+		except Contributor.DoesNotExist:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
 		serializer = serializers.IssuePostSerializer(data=request.data)
 		if serializer.is_valid():
-			serializer.save(project_id=project_id, assignee_user_id=request.user)
+			serializer.save(project_id=project_id, assignee_user=request.user)
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -157,9 +161,12 @@ class IssueDetail(APIView):
 	permission_classes = [IsAuthenticated]
 
 	def put(self, request, project_id, issue_id):
+		""" only owner of issue can update issue"""
 		try:
 			issue = models.Issue.objects.filter(project_id=project_id).get(pk=issue_id)
-		except:
+			if issue.assignee_user != request.user:
+				return return Response({"response":"You don't have permission to update this issue"})
+		except Issue.DoesNotExist:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
 		serializer = serializers.IssuePostSerializer(issue, data=request.data)
@@ -169,14 +176,17 @@ class IssueDetail(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def delete(self, request, project_id, issue_id):
+		""" only owner of issue can delete issue"""
 		try:
 			issue = models.Issue.objects.filter(project_id=project_id).get(pk=issue_id)
-		except:
+			if issue.assignee_user != request.user:
+				return return Response({"response":"You don't have permission to delete this issue"})
+		except Issue.DoesNotExist:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
 		issue.delete()
-		content = {"detail":f"issue {issue_id} deleted"}
-		return Response(content, status=status.HTTP_204_NO_CONTENT)
+		content = {"response":"issue deleted"}
+		return Response(content)
 
 
 class Comment(APIView):
