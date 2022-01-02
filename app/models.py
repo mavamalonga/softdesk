@@ -15,7 +15,7 @@ class User(AbstractUser):
 
 class Contributor(models.Model):
 
-	username = models.CharField(max_length=255)
+	user = models.CharField(max_length=255)
 	project_id = models.IntegerField()
 	permission = models.CharField(max_length=255)
 	role = models.CharField(max_length=255)
@@ -38,7 +38,7 @@ class Issue(models.Model):
 	priority = models.CharField(max_length=128)
 	project_id = models.IntegerField()
 	status = models.CharField(max_length=128)
-	assignee_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	created_time = models.DateTimeField(auto_now_add=True) 
 
 	def __str__(self):
