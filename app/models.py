@@ -3,8 +3,12 @@ from django.db import models
 from django.conf import settings
 
 """ accounts : 
-		admin-oc, password-oc
-		admin, Se3cret!
+{
+    "username": "user-oc",
+    "email": "user-oc@exemple.com",
+    "first_name": "user",
+    "last_name": "oc"
+}
 """
 
 class User(AbstractUser):

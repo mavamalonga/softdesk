@@ -11,7 +11,7 @@ class CommentAdmin(admin.ModelAdmin):
 	list_display = ('author', )
 
 class ContributorAdmin(admin.ModelAdmin):
-	list_display = ('username', )
+	list_display = ('user', )
 
 class UserAdmin(admin.ModelAdmin):
 	list_display = ('username', )

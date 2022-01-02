@@ -79,16 +79,16 @@ class ContributorSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Contributor
-		fields = ['user_id', 'project_id', 'permission', 'role']
+		fields = ['user', 'project_id', 'permission', 'role']
 
 
 class ContributorAddSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Contributor
-		fields = ('username', 'permission', 'role')
+		fields = ('user', 'permission', 'role')
 		extra_kwargs = {
-			'username': {'required': True},
+			'user': {'required': True},
 			'permission':{'required':True},
 			'role':{'required':True}
 		}
@@ -97,7 +97,7 @@ class ContributorGetSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Contributor
-		fields = ['username', 'project_id', 'permission', 'role']
+		fields = ['user', 'project_id', 'permission', 'role']
 
 
 
@@ -108,7 +108,7 @@ class IssueSerializer(ModelSerializer):
 	class Meta:
 		model = models.Issue
 		fields = ['id', 'title', 'project_id', 'description', 'tag', 'priority', 'status', 
-			'assignee_user', 'created_time', 'comments']
+			'author', 'created_time', 'comments']
 
 	def get_comments(self, instance):
 		queryset = models.Comment.objects.filter(issue_id=instance.id)
