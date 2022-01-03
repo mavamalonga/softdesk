@@ -19,7 +19,7 @@ class User(AbstractUser):
 
 class Contributor(models.Model):
 
-	user = models.CharField(max_length=255)
+	user = models.IntegerField()
 	project_id = models.IntegerField()
 	permission = models.CharField(max_length=255)
 	role = models.CharField(max_length=255)
