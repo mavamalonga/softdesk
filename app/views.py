@@ -105,7 +105,7 @@ class IssueView(APIView):
 		contributors = models.Contributor.objects.filter(project_id=project_id)
 		contributor = get_object_or_404(contributors, user=request.user.id)
 		self.check_object_permissions(self.request, contributor)
-		issues = models.Issue.objects.all()
+		issues = models.Issue.objects.filter(project_id=project_id)
 		if issues.count() == 0:
 			return Response({"response":"the issues list is empty "})
 		serializer = serializers.IssueSerializer(issues, many=True)

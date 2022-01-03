@@ -2,14 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 
-""" accounts : 
-{
-    "username": "user-oc",
-    "email": "user-oc@exemple.com",
-    "first_name": "user",
-    "last_name": "oc"
-}
-"""
 
 class User(AbstractUser):
 	
