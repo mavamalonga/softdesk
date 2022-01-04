@@ -52,13 +52,13 @@ class ProjectViewGetSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Project
-		fields = ['id', 'title', 'description', 'projet_type']
+		fields = ['id', 'title', 'description', 'project_type']
 
 class ProjectViewPostSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Project
-		fields = ['title', 'description', 'projet_type']
+		fields = ['title', 'description', 'project_type']
 
 
 class ProjectDetailSerializer(ModelSerializer):
@@ -67,7 +67,7 @@ class ProjectDetailSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Project
-		fields = ['id', 'title', 'description', 'projet_type', 'issues']
+		fields = ['id', 'title', 'description', 'project_type', 'issues']
 
 	def get_issues(self, instance):
 		queryset = models.Issue.objects.filter(project_id=instance.id)

@@ -20,7 +20,7 @@ class Project(models.Model):
 
 	title = models.CharField(max_length=255)
 	description = models.TextField(max_length=8192, blank=True)
-	projet_type = models.CharField(max_length=128)
+	project_type = models.CharField(max_length=128)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	
 	def __str__(self):
