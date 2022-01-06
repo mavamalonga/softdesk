@@ -44,12 +44,15 @@ class ProjectViewDetail(APIView):
 	permission_classes = [IsContrubutorOrIsOwner]
 
 	def get(self, request, project_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
 		serializer = serializers.ProjectDetailSerializer(project)
 		return Response(serializer.data)
 
 	def put(self, request, project_id):
 		project = get_object_or_404(models.Project, pk=project_id)
+		self.check_object_permissions(self.request, project)
 		serializer = serializers.ProjectViewPostSerializer(project, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
@@ -58,6 +61,7 @@ class ProjectViewDetail(APIView):
 
 	def delete(self, request, project_id):
 		project = get_object_or_404(models.Project, pk=project_id)
+		self.check_object_permissions(self.request, project)
 		content = {"respose": f"project {project.title} deleted"}
 		project.delete()
 		return Response(content)
@@ -68,12 +72,16 @@ class ContributorView(APIView):
 	permission_classes = [IsContrubutorOrIsOwner]
 
 	def get(self, request, project_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
 		contributors = models.Contributor.objects.filter(project_id=project_id)
 		serializer = serializers.ContributorGetSerializer(contributors, many=True)
 		return Response(serializer.data)
 	
 	def post(self, request, project_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
 		serializer = serializers.ContributorAddSerializer(data=request.data)
 		if serializer.is_valid():
@@ -89,6 +97,7 @@ class ContributorViewDetail(APIView):
 
 	def delete(self, request, project_id, user):
 		project = get_object_or_404(models.Project, pk=project_id)
+		self.check_object_permissions(self.request, project)
 		user = get_object_or_404(models.User, pk=user)
 		contributor = get_object_or_404(models.Contributor, user=user)
 		content = {"response": f"contributor {contributor.user.id} {contributor.user.username} deleted"}
@@ -101,14 +110,16 @@ class IssueView(APIView):
 	permission_classes = [IsContrubutorOrIsOwner]
 
 	def get(self, request, project_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
-		issues = get_object_or_404(models.Issue, project_id=project.id)
-		if issues.count() == 0:
-			return Response({"response":"the issues list is empty "})
+		issues = models.Issue.objects.filter(project_id=project.id)
 		serializer = serializers.IssueSerializer(issues, many=True)
 		return Response(serializer.data)
 
 	def post(self, request, project_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
 		serializer = serializers.IssuePostSerializer(data=request.data)
 		if serializer.is_valid():
@@ -123,6 +134,7 @@ class IssueDetail(APIView):
 
 	def put(self, request, project_id, issue_id):
 		issue = get_object_or_404(models.Issue, pk=issue_id)
+		self.check_object_permissions(self.request, issue)
 		serializer = serializers.IssuePostSerializer(issue, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
@@ -131,6 +143,7 @@ class IssueDetail(APIView):
 
 	def delete(self, request, project_id, issue_id):
 		issue = get_object_or_404(models.Issue, pk=issue_id)
+		self.check_object_permissions(self.request, project)
 		issue.delete()
 		content = {"response": "issue deleted"}
 		return Response(content)
@@ -141,6 +154,8 @@ class Comment(APIView):
 	permission_classes = [IsContrubutorOrIsOwner]
 
 	def get(self, request, project_id, issue_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
 		issue = get_object_or_404(models.Issue, pk=issue_id)
 		comments = models.Comment.objects.filter(issue=issue.id)
@@ -148,6 +163,8 @@ class Comment(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, project_id, issue_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
@@ -162,6 +179,8 @@ class CommentDetail(APIView):
 	permission_classes = [IsContrubutorOrIsOwner]
 
 	def get(self, request, project_id, issue_id, comment_id):
+		contributors = models.Contributor.objects.filter(project_id=project_id)
+		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
@@ -174,6 +193,7 @@ class CommentDetail(APIView):
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
 		comment =  models.Comment.objects.filter(issue=issue.id).get(pk=comment_id)
+		self.check_object_permissions(self.request, project)
 		""" PUT and POST method use the same serializer method"""
 		serializer = serializers.CommentPostSerializer(comment, data=request.data)
 		if serializer.is_valid():
@@ -185,6 +205,7 @@ class CommentDetail(APIView):
 		project = get_object_or_404(models.Project, pk=project_id)
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
+		self.check_object_permissions(self.request, project)
 		comment =  models.Comment.objects.filter(issue=issue.id).get(pk=comment_id)
 		comment.delete()
 		content = {"response":"comment deleted"}
