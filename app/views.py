@@ -38,7 +38,7 @@ class ProjectView(APIView):
 
 class ProjectViewDetail(APIView):
 
-	permission_classes = [permissions.ApiPermissions]
+	permission_classes = [permissions.IsContrubutorAndOwner]
 
 	def get(self, request, project_id):
 		project = get_object_or_404(models.Project, pk=project_id)
@@ -67,7 +67,7 @@ class ProjectViewDetail(APIView):
 
 class ContributorView(APIView):
 
-	permission_classes = [permissions.ApiPermissions]
+	permission_classes = [permissions.IsContrubutorAndOwner]
 
 	def get(self, request, project_id):
 		project = get_object_or_404(models.Project, pk=project_id)
@@ -98,7 +98,7 @@ class ContributorView(APIView):
 
 class IssueView(APIView):
 
-	permission_classes = [permissions.ApiPermissions]
+	permission_classes = [permissions.IsContrubutorAndOwner]
 
 	def get(self, request, project_id):
 		project = get_object_or_404(models.Project, pk=project_id)
@@ -125,7 +125,7 @@ class IssueView(APIView):
 
 class IssueDetail(APIView):
 
-	permission_classes = [permissions.ApiPermissions]
+	permission_classes = [permissions.IsContrubutorAndOwner]
 
 	def put(self, request, project_id, issue_id):
 		issue = get_object_or_404(models.Issue, pk=issue_id)
@@ -146,7 +146,7 @@ class IssueDetail(APIView):
 
 class Comment(APIView):
 
-	permission_classes = [permissions.ApiPermissions]
+	permission_classes = [permissions.IsContrubutorAndOwner]
 
 	def get(self, request, project_id, issue_id):
 		contributors = models.Contributor.objects.filter(project_id=project_id)
@@ -173,7 +173,7 @@ class Comment(APIView):
 
 class CommentDetail(APIView):
 
-	permission_classes = [permissions.ApiPermissions]
+	permission_classes = [permissions.IsContrubutorAndOwner]
 
 	def get(self, request, project_id, issue_id, comment_id):
 		project = get_object_or_404(models.Project, pk=project_id)
