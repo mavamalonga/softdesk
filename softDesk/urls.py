@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/project/', views.ProjectView.as_view()),
     path('api/project/<int:project_id>/', views.ProjectViewDetail.as_view()),
     path('api/project/<int:project_id>/users/', views.ContributorView.as_view()),
+    path('api/project/<int:project_id>/users/<int:user>/', views.ContributorViewDetail.as_view()),
     path('api/project/<int:project_id>/issues/', views.IssueView.as_view()),
     path('api/project/<int:project_id>/issues/<int:issue_id>/', views.IssueDetail.as_view()),
     path('api/project/<int:project_id>/issues/<int:issue_id>/comments/', views.Comment.as_view()),

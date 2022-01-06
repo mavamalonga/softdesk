@@ -9,13 +9,6 @@ class User(AbstractUser):
 		return self.first_name
 
 
-class Contributor(models.Model):
-
-	user = models.IntegerField()
-	project_id = models.IntegerField()
-	permission = models.CharField(max_length=255)
-	role = models.CharField(max_length=255)
-
 class Project(models.Model):
 
 	title = models.CharField(max_length=255)
@@ -25,6 +18,14 @@ class Project(models.Model):
 	
 	def __str__(self):
 		return self.title
+
+class Contributor(models.Model):
+
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+	permission = models.CharField(max_length=255)
+	role = models.CharField(max_length=255)
+	
 
 class Issue(models.Model):
 

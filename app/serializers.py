@@ -86,12 +86,8 @@ class ContributorAddSerializer(ModelSerializer):
 
 	class Meta:
 		model = models.Contributor
-		fields = ('user', 'permission', 'role')
-		extra_kwargs = {
-			'user': {'required': True},
-			'permission':{'required':True},
-			'role':{'required':True}
-		}
+		fields = ['user', 'permission', 'role']
+
 
 class ContributorGetSerializer(ModelSerializer):
 
