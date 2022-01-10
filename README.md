@@ -14,11 +14,11 @@
 	</p>
 	<h2>Installtion</h2>
 	<p>
-		1.Clonez le repository en utilisant <mark>git clone</mark><br>
-		2.Se déplacer dans le répertoire racine SoftDesk en utilisant la commande <mark>cd softDesk</mark><br>
-		3.Créer un environnement virtuel pour le projet avec la commande <mark>python -m venv env</mark><br>
-		4.Activez l'environnement virtuel avec la commande <mark>env\Scripts\activate.bat</mark><br>
-		5.Installez les dépendances du project avec la commande <mark>pip install -r requirements.txt</mark><br>
+		1.Clonez le repository en utilisant <span style="background:#F0F0F0">git clone</span><br>
+		2.Se déplacer dans le répertoire racine SoftDesk en utilisant la commande <span style="background:#F0F0F0">cd softDesk</span><br>
+		3.Créer un environnement virtuel pour le projet avec la commande <span style="background:#F0F0F0">python -m venv env</span><br>
+		4.Activez l'environnement virtuel avec la commande <span style="background:#F0F0F0">env\Scripts\activate.bat</span><br>
+		5.Installez les dépendances du project avec la commande <span style="background:#F0F0F0">pip install -r requirements.txt</span><br>
 	</p>
 	<h3>Documentation et détails d'utilisation des endpoints de l'API</h3>
 	<p>
