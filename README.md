@@ -9,11 +9,11 @@
 	</p>
 	<h2>Installtion</h2>
 	<p>
-		1.Clonez le repository en utilisant <mark>git clone</mark><br>
-		2.Se déplacer dans le répertoire racine SoftDesk en utilisant la commande <mark>cd softDesk</mark><br>
+		1.Clonez le repository en utilisant <em>git clone</em><br>
+		2.Se déplacer dans le répertoire racine SoftDesk en utilisant la commande <em>cd softDesk</em><br>
 		3.Créer un environnement virtuel pour le projet avec la commande <mark>python -m venv env</mark><br>
-		4.Activez l'environnement virtuel avec la commande <mark>env\Scripts\activate.bat</mark><br>
-		5.Installez les dépendances du project avec la commande <mark>pip install -r requirements.txt</mark><br>
+		4.Activez l'environnement virtuel avec la commande <em>env\Scripts\activate.bat</em><br>
+		5.Installez les dépendances du project avec la commande <em>pip install -r requirements.txt</em><br>
 	</p>
 	<h3>Documentation et détails d'utilisation des endpoints de l'API</h3>
 	<p>
@@ -74,6 +74,51 @@
 			<td>Supprimer un utilisateur d'un</td>
 			<td>DELETE</td>
 			<td>/projects/{id}/users/{id}</td>
+		</tr>
+		<tr>
+			<td>Récupérer la liste des problèmes (issues) liés à un projet (project)</td>
+			<td>GET</td>
+			<td>/projects/{id}/issues/</td>
+		</tr>
+		<tr>
+			<td>Créer un problème dans un projet</td>
+			<td>POST</td>
+			<td>/projects/{id}/issues/</td>
+		</tr>
+		<tr>
+			<td>Mettre à jour un problème dans un projet</td>
+			<td>PUT</td>
+			<td>/projects/{id}/issues/{id}</td>
+		</tr>
+		<tr>
+			<td>Supprimer un problème d'un projet</td>
+			<td>DELETE</td>
+			<td>/projects/{id}/issues/{id}</td>
+		</tr>
+		<tr>
+			<td>Créer des commentaires sur un problème</td>
+			<td>POST</td>
+			<td>/projects/{id}/issues/{id}/comments/</td>
+		</tr>
+		<tr>
+			<td>Récupérer la liste de tous les commentaires liés à un problème (issue)</td>
+			<td>GET</td>
+			<td>/projects/{id}/issues/{id}/comments/</td>
+		</tr>
+		<tr>
+			<td>Modifier un commentaire</td>
+			<td>PUT</td>
+			<td>/projects/{id}/issues/{id}/comments/</td>
+		</tr>
+		<tr>
+			<td>Supprimer un commentaire</td>
+			<td>DELETE</td>
+			<td>/projects/{id}/issues/{id}/comments/{id}</td>
+		</tr>
+		<tr>
+			<td>Récupérer un commentaire (comment) via son id</td>
+			<td>GET</td>
+			<td>/projects/{id}/issues/{id}/comments/{id}</td>
 		</tr>
 	</table>
 </body>
