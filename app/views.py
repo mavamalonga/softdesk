@@ -142,7 +142,7 @@ class IssueDetail(APIView):
 
 	def delete(self, request, project_id, issue_id):
 		issue = get_object_or_404(models.Issue, pk=issue_id)
-		self.check_object_permissions(self.request, project)
+		self.check_object_permissions(self.request, issue)
 		issue.delete()
 		content = {"response": "issue deleted"}
 		return Response(content)
@@ -167,11 +167,16 @@ class Comment(APIView):
 		project = get_object_or_404(models.Project, pk=project_id)
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
-		serializer = serializers.CommentPostSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save(issue=issue, author=request.user)
-			return Response(serializer.data, status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		if issue.assignee_user == request.user.id:
+			serializer = serializers.CommentPostSerializer(data=request.data)
+			if serializer.is_valid():
+				serializer.save(issue=issue, author=request.user)
+				return Response(serializer.data, status.HTTP_201_CREATED)
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		else:
+			content = "required authorization"
+			return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CommentDetail(APIView):
 
