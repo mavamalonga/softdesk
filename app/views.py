@@ -118,9 +118,8 @@ class IssueView(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, project_id):
-		contributors = models.Contributor.objects.filter(project_id=project_id)
-		contributor = get_object_or_404(contributors, user=request.user)
 		project = get_object_or_404(models.Project, pk=project_id)
+		self.check_object_permissions(self.request, project)
 		serializer = serializers.IssuePostSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save(project_id=project.id, author=request.user)
