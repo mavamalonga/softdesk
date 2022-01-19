@@ -143,7 +143,7 @@ class IssueDetail(APIView):
 
 	def delete(self, request, project_id, issue_id):
 		issue = get_object_or_404(models.Issue, pk=issue_id)
-		self.check_object_permissions(self.request, project)
+		self.check_object_permissions(self.request, issue)
 		issue.delete()
 		content = {"response": "issue deleted"}
 		return Response(content)
