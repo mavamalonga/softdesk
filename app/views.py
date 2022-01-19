@@ -122,8 +122,8 @@ class IssueView(APIView):
 		self.check_object_permissions(self.request, project)
 		serializer = serializers.IssuePostSerializer(data=request.data)
 		if serializer.is_valid():
-			print(request.data.assignee_user)
-			assignee_user = get_object_or_404(models.User, pk=int(request.data.assignee_user))
+			assignee_user_id = request.data['asssignee_user']
+			assignee_user = get_object_or_404(models.User, pk=assignee_user_id)
 			serializer.save(project_id=project.id, author=request.user, assignee_user=assignee_user)
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -169,7 +169,7 @@ class Comment(APIView):
 		project = get_object_or_404(models.Project, pk=project_id)
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
-		if issue.assignee_user == request.user.id:
+		if issue.assignee_user.id == request.user.id:
 			serializer = serializers.CommentPostSerializer(data=request.data)
 			if serializer.is_valid():
 				serializer.save(issue=issue, author=request.user)
@@ -199,19 +199,23 @@ class CommentDetail(APIView):
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
 		comment =  models.Comment.objects.filter(issue=issue.id).get(pk=comment_id)
-		self.check_object_permissions(self.request, project)
-		""" PUT and POST method use the same serializer method"""
-		serializer = serializers.CommentPostSerializer(comment, data=request.data)
-		if serializer.is_valid():
-			serializer.save(issue=issue, author=request.user)
-			return Response(serializer.data)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		if issue.assignee_user.id == request.user.id:
+			""" PUT and POST method use the same serializer method"""
+			serializer = serializers.CommentPostSerializer(comment, data=request.data)
+			if serializer.is_valid():
+				serializer.save(issue=issue, author=request.user)
+				return Response(serializer.data)
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		else:
+			content = "required authorization"
+			return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
 
 	def delete(self, request, project_id, issue_id, comment_id):
 		project = get_object_or_404(models.Project, pk=project_id)
 		issues = models.Issue.objects.filter(project_id=project_id)
 		issue = get_object_or_404(issues, pk=issue_id)
-		self.check_object_permissions(self.request, project)
+		self.check_object_permissions(self.request, issue)
 		comment =  models.Comment.objects.filter(issue=issue.id).get(pk=comment_id)
 		comment.delete()
 		content = {"response":"comment deleted"}
