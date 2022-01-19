@@ -37,6 +37,7 @@ class Issue(models.Model):
 	status = models.CharField(max_length=128)
 	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	created_time = models.DateTimeField(auto_now_add=True) 
+	assignee_user = models.ForeignKey(User, related_name='assignee_user', on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.title

@@ -122,7 +122,9 @@ class IssueView(APIView):
 		self.check_object_permissions(self.request, project)
 		serializer = serializers.IssuePostSerializer(data=request.data)
 		if serializer.is_valid():
-			serializer.save(project_id=project.id, author=request.user)
+			print(request.data.assignee_user)
+			assignee_user = get_object_or_404(models.User, pk=int(request.data.assignee_user))
+			serializer.save(project_id=project.id, author=request.user, assignee_user=assignee_user)
 			return Response(serializer.data, status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
