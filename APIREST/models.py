@@ -22,7 +22,7 @@ class Project(models.Model):
 	description = models.TextField(max_length=8192, blank=True)
 	tag = models.CharField(max_length=1, choices=TAG_CHOICES)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
-	Contributors = models.ManyToManyField(User, related_name='contributors')
+	contributors = models.ManyToManyField(User, related_name='contributors')
 	
 	def __str__(self):
 		return self.title
@@ -52,5 +52,5 @@ class Comment(models.Model):
 	issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue')
 	created_time = models.DateTimeField(auto_now_add=True)
 
-	def __str__(self) -> str:
-		return self.author
+	def __str__(self):
+		return self.description
