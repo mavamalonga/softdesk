@@ -5,24 +5,24 @@
 <body>
 	<h1>SoftDesk-API</h1>
 	<p>
-		SoftDesk, une société d'édition de logiciels de développement et de collaboration, a décidé de publier une application permettant de remonter et suivre des problèmes techniques (issue tracking system). Cette solution s’adresse à des entreprises clientes, en B2B
+		SoftDesk, une sociï¿½tï¿½ d'ï¿½dition de logiciels de dï¿½veloppement et de collaboration, a dï¿½cidï¿½ de publier une application permettant de remonter et suivre des problï¿½mes techniques (issue tracking system). Cette solution sï¿½adresse ï¿½ des entreprises clientes, en B2B
 	</p>
 	<h2>Installtion</h2>
 	<p>
 		1.Clonez le repository en utilisant <span style="background:grey;">git clone</span><br>
-		2.Se déplacer dans le répertoire racine SoftDesk en utilisant la commande <span style="background:grey">cd softDesk</span><br>
-		3.Créer un environnement virtuel pour le projet avec la commande <span style="background:grey">python -m venv env</span><br>
+		2.Se dï¿½placer dans le rï¿½pertoire racine SoftDesk en utilisant la commande <span style="background:grey">cd softDesk</span><br>
+		3.Crï¿½er un environnement virtuel pour le projet avec la commande <span style="background:grey">python -m venv env</span><br>
 		4.Activez l'environnement virtuel avec la commande <span style="background:grey">env\Scripts\activate.bat</span><br>
-		5.Installez les dépendances du project avec la commande <span style="background:grey">pip install -r requirements.txt</span><br>
+		5.Installez les dï¿½pendances du project avec la commande <span style="background:grey">pip install -r requirements.txt</span><br>
 	</p>
-	<h3>Documentation et détails d'utilisation des endpoints de l'API</h3>
+	<h3>Documentation et dï¿½tails d'utilisation des endpoints de l'API</h3>
 	<p>
-		Une fois le serveur lancé, lisez le document  suivant avant de faire vos premières requetes à l'API.<br>
+		Une fois le serveur lancï¿½, lisez le document  suivant avant de faire vos premiï¿½res requetes ï¿½ l'API.<br>
 	</p>
 	<table>
 		<tr>
 			<th>Point de terminaison d'API</th>
-			<th>Méthode HTTP</th>
+			<th>Mï¿½thode HTTP</th>
 			<th>URI</th>
 		</tr>
 		<tr>
@@ -36,37 +36,37 @@
 			<td>/login/</td>
 		</tr>
 		<tr>
-			<td>Récupérer la liste de tous les projets (projects) rattachés à l'utilisateur (user) connecté</td>
+			<td>Rï¿½cupï¿½rer la liste de tous les projets (projects) rattachï¿½s ï¿½ l'utilisateur (user) connectï¿½</td>
 			<td>GET</td>
 			<td>/projects/</td>
 		</tr>
 		<tr>
-			<td>Créer un projet</td>
+			<td>Crï¿½er un projet</td>
 			<td>POST</td>
 			<td>/projects/</td>
 		</tr>
 		<tr>
-			<td>Récupérer les détails d'un projet (project) via son id</td>
+			<td>Rï¿½cupï¿½rer les dï¿½tails d'un projet (project) via son id</td>
 			<td>GET</td>
 			<td>/projects/{id}/</td>
 		</tr>
 		<tr>
-			<td>Mettre à jour un projet</td>
+			<td>Mettre ï¿½ jour un projet</td>
 			<td>PUT</td>
 			<td>/projects/{id}/</td>
 		</tr>
 		<tr>
-			<td>Supprimer un projet et ses problèmes</td>
+			<td>Supprimer un projet et ses problï¿½mes</td>
 			<td>DELETE</td>
 			<td>/projects/{id}/</td>
 		</tr>
 		<tr>
-			<td>Ajouter un utilisateur (collaborateur) à un projet</td>
+			<td>Ajouter un utilisateur (collaborateur) ï¿½ un projet</td>
 			<td>POST</td>
 			<td>/projects/{id}/users/</td>
 		</tr>
 		<tr>
-			<td>Récupérer la liste de tous les utilisateurs (users) attachés à un projet (project)</td>
+			<td>Rï¿½cupï¿½rer la liste de tous les utilisateurs (users) attachï¿½s ï¿½ un projet (project)</td>
 			<td>GET</td>
 			<td>/projects/{id}/users/</td>
 		</tr>
@@ -76,32 +76,32 @@
 			<td>/projects/{id}/users/{id}</td>
 		</tr>
 		<tr>
-			<td>Récupérer la liste des problèmes (issues) liés à un projet (project)</td>
+			<td>Rï¿½cupï¿½rer la liste des problï¿½mes (issues) liï¿½s ï¿½ un projet (project)</td>
 			<td>GET</td>
 			<td>/projects/{id}/issues/</td>
 		</tr>
 		<tr>
-			<td>Créer un problème dans un projet</td>
+			<td>Crï¿½er un problï¿½me dans un projet</td>
 			<td>POST</td>
 			<td>/projects/{id}/issues/</td>
 		</tr>
 		<tr>
-			<td>Mettre à jour un problème dans un projet</td>
+			<td>Mettre ï¿½ jour un problï¿½me dans un projet</td>
 			<td>PUT</td>
 			<td>/projects/{id}/issues/{id}</td>
 		</tr>
 		<tr>
-			<td>Supprimer un problème d'un projet</td>
+			<td>Supprimer un problï¿½me d'un projet</td>
 			<td>DELETE</td>
 			<td>/projects/{id}/issues/{id}</td>
 		</tr>
 		<tr>
-			<td>Créer des commentaires sur un problème</td>
+			<td>Crï¿½er des commentaires sur un problï¿½me</td>
 			<td>POST</td>
 			<td>/projects/{id}/issues/{id}/comments/</td>
 		</tr>
 		<tr>
-			<td>Récupérer la liste de tous les commentaires liés à un problème (issue)</td>
+			<td>Rï¿½cupï¿½rer la liste de tous les commentaires liï¿½s ï¿½ un problï¿½me (issue)</td>
 			<td>GET</td>
 			<td>/projects/{id}/issues/{id}/comments/</td>
 		</tr>
@@ -116,7 +116,7 @@
 			<td>/projects/{id}/issues/{id}/comments/{id}</td>
 		</tr>
 		<tr>
-			<td>Récupérer un commentaire (comment) via son id</td>
+			<td>Rï¿½cupï¿½rer un commentaire (comment) via son id</td>
 			<td>GET</td>
 			<td>/projects/{id}/issues/{id}/comments/{id}</td>
 		</tr>
