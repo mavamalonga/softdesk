@@ -1,14 +1,9 @@
 from rest_framework import permissions
-from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
-from django.db import models
-from django.shortcuts import get_object_or_404
-from app.models import Contributor
 
 class IsContrubutorOrIsOwner(permissions.BasePermission):
+    message = 'Permission only to the contributors members.'
 
     def has_object_permission(self, request, view, obj):
-
-        if request.method in ['GET', 'POST']:
+        if request.method in ['GET']:
             return True
-        return request.user.id == obj.author.id
-
+        return request.user in obj.contributors

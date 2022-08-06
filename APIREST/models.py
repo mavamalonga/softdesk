@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
@@ -10,31 +11,33 @@ class User(AbstractUser):
 
 
 class Project(models.Model):
+	TAG_CHOICES = (
+        ('w', 'application web'),
+        ('l', 'logiciel desktop'),
+		('m', 'application mobile'),
+		('o', 'other'),
+    )
 
 	title = models.CharField(max_length=255)
 	description = models.TextField(max_length=8192, blank=True)
-	project_type = models.CharField(max_length=128)
+	tag = models.CharField(max_length=1, choices=TAG_CHOICES)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
+	Contributors = models.ManyToManyField(User, related_name='contributors')
 	
 	def __str__(self):
 		return self.title
-
-class Contributor(models.Model):
-
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
-	permission = models.CharField(max_length=255)
-	role = models.CharField(max_length=255)
 	
 
 class Issue(models.Model):
+	STATUS_CHOICES = (
+        ('o', 'Open'),
+        ('r', 'resolved'),
+    )
 
 	title = models.CharField(max_length=128)
 	description = models.TextField(max_length=8192)
-	tag = models.CharField(max_length=128)
-	priority = models.CharField(max_length=128)
-	project_id = models.IntegerField()
-	status = models.CharField(max_length=128)
+	project = models.ForeignKey(Project, related_name='project', on_delete=models.CASCADE)
+	status =  models.CharField(max_length=1, choices=STATUS_CHOICES)
 	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	created_time = models.DateTimeField(auto_now_add=True) 
 	assignee_user = models.ForeignKey(User, related_name='assignee_user', on_delete=models.CASCADE)
@@ -42,8 +45,12 @@ class Issue(models.Model):
 	def __str__(self):
 		return self.title
 
+
 class Comment(models.Model):
 	description = models.TextField(max_length=8192)
 	author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name='author')
 	issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue')
 	created_time = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self) -> str:
+		return self.author
